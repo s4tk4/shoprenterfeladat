@@ -3,6 +3,7 @@
 class secretcontroller
 {
     private $db;
+    private $headers;
     private $statuscode=404;
     private $responsemessage="Secret not found";
     
@@ -23,6 +24,8 @@ class secretcontroller
     private function __construct($db)
     {
         $this->db = $db;
+        $this->headers = apache_request_headers();
+        $this->acceptresponse = $this->headers["Accept"];
     }
 
     private function InsertNewSecret($request, &$secret)
@@ -123,6 +126,23 @@ class secretcontroller
         header("HTTP/1.0 $statuscode");
     }
 
+    private function getResponseMessage($result)
+    {
+        switch($this->acceptresponse)
+        {
+            case "application/xml" :
+                {
+                    return xmlrpc_encode($result);
+                    break;
+                }
+            case "application/json" :
+                {
+                    return json_encode($result);
+                    break;
+                }
+        }
+    }
+
 
     // doing GET request
     public function doGetRequest($request)
@@ -136,7 +156,7 @@ class secretcontroller
             {
                 $this->UpdateRemainingViews($result);
                 $this->statuscode = 200;
-                $this->responsemessage = json_encode($result);
+                $this->responsemessage = $this->getResponseMessage($result);
             }
             
         }
@@ -157,7 +177,7 @@ class secretcontroller
             $this->InsertNewSecret($request, $secret);
 
             $this->statuscode = 200;
-            $this->responsemessage = json_encode($secret);
+            $this->responsemessage = $this->getResponseMessage($secret);
         }
          
         $this->setHeader($this->statuscode);
