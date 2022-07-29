@@ -1,0 +1,11 @@
+RewriteEngine ON
+RewriteBase /
+##RewriteBase /test/
+##Extrenal redirect rule.
+RewriteCond %{THE_REQUEST} \s/(api/v1/secret)/([a-zA-Z0-9]+)\s [NC]
+RewriteRule ^  %1/index.php?hash=%2  [L]
+
+##Internal rewrite rule.
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^([^/]*)/([^/]*)/(.*)/?$  $1/$2.php?id=$3 [QSA,L]
