@@ -126,6 +126,7 @@ class secretcontroller
         header("HTTP/1.0 $statuscode");
     }
 
+    // get encoded response message
     private function getResponseMessage($result)
     {
         switch($this->acceptresponse)
@@ -142,7 +143,6 @@ class secretcontroller
                 }
         }
     }
-
 
     // doing GET request
     public function doGetRequest($request)
